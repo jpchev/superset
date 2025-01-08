@@ -127,9 +127,13 @@ function Echart(
     getEchartInstance: () => chartRef.current,
   }));
 
-  const localeObj = useSelector((state: ExplorePageState) => state?.common?.locale ?? 'en');
+  const localeObj = useSelector(
+    (state: ExplorePageState) => state?.common?.locale ?? 'en'
+  );
   try {
-    const lang = require(`echarts/lib/i18n/lang/${localeObj.toUpperCase()}`).default;
+    const lang = require(
+      `echarts/lib/i18n/lang/${localeObj.toUpperCase()}`
+    ).default;
     echarts.registerLocale(localeObj.toUpperCase(), lang);
   } catch (e) {
     console.warn(`Locale ${localeObj} not supported in ECharts`);
