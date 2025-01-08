@@ -127,10 +127,14 @@ function Echart(
     getEchartInstance: () => chartRef.current,
   }));
 
-  const localeObj = useSelector((state: ExplorePageState) => state?.common?.locale);
-  const lang = require('echarts/lib/i18n/lang' + localeObj.toUpperCase()).default;
-  echarts.registerLocale(localeObj.toUpperCase(), lang);
-
+  const localeObj = useSelector((state: ExplorePageState) => state?.common?.locale ?? 'en');
+  try {
+    const lang = require(`echarts/lib/i18n/lang/${localeObj.toUpperCase()}`).default;
+    echarts.registerLocale(localeObj.toUpperCase(), lang);
+  } catch (e) {
+    console.warn(`Locale ${localeObj} not supported in ECharts`);
+  }
+  
   useEffect(() => {
     if (!divRef.current) return;
     if (!chartRef.current) {
