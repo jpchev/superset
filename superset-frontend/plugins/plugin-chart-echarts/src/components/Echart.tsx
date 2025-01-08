@@ -29,7 +29,7 @@ import {
 
 import { useSelector } from 'react-redux';
 import { ExplorePageState } from 'src/explore/types';
-import * as echarts from 'echarts/core';
+import { registerLocale } from 'echarts/core';
 
 import { styled } from '@superset-ui/core';
 import { use, init, EChartsType } from 'echarts/core';
