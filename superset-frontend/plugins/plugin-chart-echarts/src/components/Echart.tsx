@@ -128,11 +128,11 @@ function Echart(
   }));
 
   const localeObj = useSelector(
-    (state: ExplorePageState) => state?.common?.locale ?? 'en'
+    (state: ExplorePageState) => state?.common?.locale ?? 'en',
   );
   try {
     const lang = require(
-      `echarts/lib/i18n/lang/${localeObj.toUpperCase()}`
+      `echarts/lib/i18n/lang/${localeObj.toUpperCase()}`,
     ).default;
     echarts.registerLocale(localeObj.toUpperCase(), lang);
   } catch (e) {
