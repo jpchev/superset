@@ -134,7 +134,7 @@ function Echart(
   } catch (e) {
     console.warn(`Locale ${localeObj} not supported in ECharts`);
   }
-  
+
   useEffect(() => {
     if (!divRef.current) return;
     if (!chartRef.current) {
