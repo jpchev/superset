@@ -127,22 +127,22 @@ function Echart(
     getEchartInstance: () => chartRef.current,
   }));
 
-  const localeObj = useSelector(
+  const locale = useSelector(
     (state: ExplorePageState) => state?.common?.locale ?? 'en',
-  );
+  ).toUpperCase();
   try {
     const lang = require(
-      `echarts/lib/i18n/lang${localeObj.toUpperCase()}`,
+      `echarts/lib/i18n/lang${locale}`,
     ).default;
-    registerLocale(localeObj.toUpperCase(), lang);
+    registerLocale(locale, lang);
   } catch (e) {
-    console.warn(`Locale ${localeObj} not supported in ECharts`);
+    console.warn(`Locale ${locale} not supported in ECharts`);
   }
 
   useEffect(() => {
     if (!divRef.current) return;
     if (!chartRef.current) {
-      chartRef.current = init(divRef.current, undefined, { locale: localeObj });
+      chartRef.current = init(divRef.current, null, { locale });
     }
 
     Object.entries(eventHandlers || {}).forEach(([name, handler]) => {
@@ -156,7 +156,7 @@ function Echart(
     });
 
     chartRef.current.setOption(echartOptions, true);
-  }, [echartOptions, eventHandlers, zrEventHandlers]);
+  }, [echartOptions, eventHandlers, zrEventHandlers, locale]);
 
   // highlighting
   useEffect(() => {
