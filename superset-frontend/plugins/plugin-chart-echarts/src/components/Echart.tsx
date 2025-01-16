@@ -134,7 +134,7 @@ function Echart(
     const lang = require(
       `echarts/lib/i18n/lang${localeObj.toUpperCase()}`,
     ).default;
-    echarts.registerLocale(localeObj.toUpperCase(), lang);
+    registerLocale(localeObj.toUpperCase(), lang);
   } catch (e) {
     console.warn(`Locale ${localeObj} not supported in ECharts`);
   }
