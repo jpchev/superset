@@ -131,9 +131,7 @@ function Echart(
     (state: ExplorePageState) => state?.common?.locale ?? 'en',
   ).toUpperCase();
   try {
-    const lang = require(
-      `echarts/lib/i18n/lang${locale}`,
-    ).default;
+    const lang = require(`echarts/lib/i18n/lang${locale}`).default;
     registerLocale(locale, lang);
   } catch (e) {
     console.warn(`Locale ${locale} not supported in ECharts`);
