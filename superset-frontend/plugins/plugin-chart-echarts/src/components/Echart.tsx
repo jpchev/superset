@@ -130,30 +130,48 @@ function Echart(
   const locale = useSelector(
     (state: ExplorePageState) => state?.common?.locale ?? 'en',
   ).toUpperCase();
-  try {
-    const lang = require(`echarts/lib/i18n/lang${locale}`).default;
-    registerLocale(locale, lang);
-  } catch (e) {
-    console.warn(`Locale ${locale} not supported in ECharts`);
-  }
+
+  const handleSizeChange = useCallback(
+    ({ width, height }: { width: number; height: number }) => {
+      if (chartRef.current) {
+        chartRef.current.resize({ width, height });
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
-    if (!divRef.current) return;
-    if (!chartRef.current) {
-      chartRef.current = init(divRef.current, null, { locale });
-    }
+    const loadLocaleAndInitChart = async () => {
+      if (!divRef.current) return;
 
-    Object.entries(eventHandlers || {}).forEach(([name, handler]) => {
-      chartRef.current?.off(name);
-      chartRef.current?.on(name, handler);
-    });
+      const lang = await import(`echarts/lib/i18n/lang${locale}`).catch(e => {
+        console.error(`Locale ${locale} not supported in ECharts`, e);
+      });
+      if (lang && lang.default) {
+        registerLocale(locale, lang.default);
+      }
 
-    Object.entries(zrEventHandlers || {}).forEach(([name, handler]) => {
-      chartRef.current?.getZr().off(name);
-      chartRef.current?.getZr().on(name, handler);
-    });
+      if (!chartRef.current) {
+        chartRef.current = init(divRef.current, null, { locale });
+      }
 
-    chartRef.current.setOption(echartOptions, true);
+      Object.entries(eventHandlers || {}).forEach(([name, handler]) => {
+        chartRef.current?.off(name);
+        chartRef.current?.on(name, handler);
+      });
+
+      Object.entries(zrEventHandlers || {}).forEach(([name, handler]) => {
+        chartRef.current?.getZr().off(name);
+        chartRef.current?.getZr().on(name, handler);
+      });
+
+      chartRef.current.setOption(echartOptions, true);
+
+      // did mount
+      handleSizeChange({ width, height });
+    };
+
+    loadLocaleAndInitChart();
   }, [echartOptions, eventHandlers, zrEventHandlers, locale]);
 
   // highlighting
@@ -172,22 +190,7 @@ function Echart(
       });
     }
     previousSelection.current = currentSelection;
-  }, [currentSelection]);
-
-  const handleSizeChange = useCallback(
-    ({ width, height }: { width: number; height: number }) => {
-      if (chartRef.current) {
-        chartRef.current.resize({ width, height });
-      }
-    },
-    [],
-  );
-
-  // did mount
-  useEffect(() => {
-    handleSizeChange({ width, height });
-    return () => chartRef.current?.dispose();
-  }, []);
+  }, [currentSelection, chartRef.current]);
 
   useLayoutEffect(() => {
     handleSizeChange({ width, height });
